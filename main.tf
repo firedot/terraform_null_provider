@@ -9,7 +9,7 @@ variable "region" {
 module "my-module" {
   #source can be any URL of file_path
   source        = "./my-module/"
-  ami_id           = "ami-941a1ff1"
+  ami_id        = "ami-941a1ff1"
   instance_type = "t2.micro"
 }
 
@@ -19,8 +19,9 @@ provider "aws" {
   region     = "${var.region}"
 }
 
-resource "aws_instance" "web" {
-  ami        = "ami-941a1ff1"
+resource "aws_instance" "cluster" {
+  count         = 4
+  ami           = "ami-941a1ff1"
   instance_type = "t2.micro"
 
   subnet_id              = "subnet-f090b498"
@@ -32,17 +33,25 @@ resource "aws_instance" "web" {
   }
 }
 
+resource "null_resource" "cluster" {
+  triggers = {
+    cluster_instance_ids = "${join(",", aws_instance.cluster.*.id)}"
+  }
+}
+
+
 output "public_ip" {
-  value = "${aws_instance.web.public_ip}"
+  value = "${aws_instance.cluster.*.public_ip}"
 }
 
 output "public_dns" {
-  value = "${aws_instance.web.public_dns}"
+  value = "${aws_instance.cluster.*.public_dns}"
 }
 
 output "address_from_module" {
   value = "${module.my-module.public_ip}"
 }
+
 output "dns_from_module" {
-value = "${module.my-module.public_dns}"
+  value = "${module.my-module.public_dns}"
 }
