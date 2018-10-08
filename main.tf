@@ -1,20 +1,8 @@
-#
-# Your security group ID is:
-#
-#    abcd1234
-#
-#...
-#
-variable "access_key" {
-  type = "string"
-}
+variable "access_key" {}
 
-variable "secret_key" {
-  type = "string"
-}
+variable "secret_key" {}
 
 variable "region" {
-  type    = "string"
   default = "us-east-2"
 }
 
